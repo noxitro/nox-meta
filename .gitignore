@@ -39,3 +39,7 @@
 
 # debug information files
 *.dwo
+/exsample/.vs/exsample.slnx/v18
+/exsample/.vs
+/exsample/exsample/x64/Debug
+/exsample/nox_meta/x64/Debug

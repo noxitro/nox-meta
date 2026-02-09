@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="nox_meta.vcxproj" Id="d4acb355-abac-4d92-82d2-1ffda4292737" />
+</Solution>
