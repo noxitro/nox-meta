@@ -6,65 +6,81 @@
 #include	<vector>
 #include	"../include/nox_meta/nox_meta_type.h"
 
-namespace nox
+class Test
 {
-	template<class T>
-	class IntrusivePtr
-	{
-	public:
-		constexpr IntrusivePtr() noexcept :
-			ptr_(nullptr)
-		{
+public:
+	constexpr Test()noexcept {}
 
-		}
+	int value;
+};
 
-		inline constexpr IntrusivePtr(T* ptr) noexcept :
-			ptr_(ptr)
-		{
-			IntrusivePtrAddRef(ptr_);
-		}
+class AbstractTest
+{
+public:
+	constexpr AbstractTest()noexcept {}
 
-		inline constexpr IntrusivePtr(std::nullptr_t) noexcept :
-			ptr_(nullptr)
-		{
-		}
-		
-		constexpr T* get() noexcept
-		{
-			return ptr_;
-		}
+	virtual void F() = 0;
+};
 
 
-	private:
-		T* ptr_;
-	};
+struct INewDeleteDisabled
+{
+	static void* operator new(std::size_t) = delete;
+	static void* operator new(std::size_t, const std::nothrow_t&) = delete;
+	static void* operator new(std::size_t, std::align_val_t) = delete;
+	static void* operator new(std::size_t, std::align_val_t, const std::nothrow_t&) = delete;
+
+	static void* operator new[](std::size_t) = delete;
+	static void* operator new[](std::size_t, const std::nothrow_t&) = delete;
+	static void* operator new[](std::size_t, std::align_val_t) = delete;
+	static void* operator new[](std::size_t, std::align_val_t, const std::nothrow_t&) = delete;
+
+	static void  operator delete(void*) = delete;
+	static void  operator delete[](void*) = delete;
+};
+
+
+// 実行時にデフォルト new 可能か（consteval コンストラクタのみの型は false）
+template<class T>
+concept RuntimeDefaultNewable = std::is_constructible_v<T> && requires
+{
+	[]()constexpr noexcept->void {T* _ = new T(); }();
+};
+
+
+template <class _Ty>
+	requires requires(_Ty* _Location) {
+	::new (static_cast<void*>(_Location)) _Ty(); // per LWG-3888
 }
-
-namespace my
-{
-	struct Object
-	{
-		int ref_count = 0;
-	};
-
-	void IntrusivePtrAddRef(Object* obj) noexcept
-	{
-		if (obj)
-		{
-			++obj->ref_count;
-		}
-	}
+constexpr _Ty* construct_at(_Ty* const _Location)
+noexcept(noexcept(::new (static_cast<void*>(_Location)) _Ty())) /* strengthened */ {
+	return ::new (static_cast<void*>(_Location)) _Ty();
 }
 
 int main()
 {
-	nox::IntrusivePtr<my::Object> objPtr = new my::Object();
+	constexpr const auto& v0000 = nox::meta::Typeof<nox::meta::detail::TemplateOf<std::vector<int>>::template type>();
+	
 
-	//constexpr decltype(auto) v = nox::meta::GetInvalidType();
+	std::is_same<signed int, int>::value;
+	
+	constexpr auto kind = nox::meta::GetTypeKind<decltype([]() {return 2; }) > ();
+	constexpr const auto& type99 = nox::meta::Typeof<decltype([]() {return 2; }) > ();
 
-	//constexpr decltype(auto) t = nox::meta::Typeof<int>();
-	//constexpr decltype(auto) t2 = nox::meta::Typeof<std::reference_wrapper>();
+	char buffer[128] = { 0 };
 
-	//auto& v2 = t;
+
+	constexpr decltype(auto) r = nox::meta::Typeof<INewDeleteDisabled>();
+	void*p = r.CreateObjectAt(buffer);
+	void*p2 = r.CreateObjectAt(buffer);
+	r.DestroyAt(buffer);
+	constexpr auto nsese = nox::meta::detail::GetPointerDepth<int*>();
+
+	//nox::meta::Typeof<int[]>();
+	//nox::meta::Typeof<int[23]>();
+	using a = std::decay_t<const volatile int[3]>;
+	using b = std::decay_t<const int[]>;
+
+
 	return 0;
 }

@@ -12,10 +12,10 @@ namespace nox::meta::function_signature
 {
 	namespace detail
 	{
-		template<class _Result, class... Args>
+		template<class ResultType_, class... Args>
 		struct FunctionSignatureBase
 		{
-			using ResultType = _Result;
+			using ResultType = ResultType_;
 
 			using ArgsTupleType = std::tuple<Args...>;
 

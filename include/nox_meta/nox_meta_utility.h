@@ -54,10 +54,11 @@ namespace nox::meta
 			constexpr std::string_view lastSignature = ">(void) noexcept";
 #endif
 
-			constexpr std::string_view contentsName(
-				signature.data() + preSignature.size(),
-				signature.size() - (preSignature.size() + lastSignature.size())
-			);
+			constexpr std::string_view contentsName =
+				signature.substr(
+					preSignature.size(),
+					signature.size() - (preSignature.size() + lastSignature.size())
+				);
 			return contentsName;
 		}
 
@@ -84,6 +85,19 @@ namespace nox::meta
 		}
 
 		template<class T>
+		inline constexpr std::size_t GetPointerDepth()noexcept
+		{ 
+			if constexpr (std::is_pointer_v<T>)
+			{
+				return 1 + nox::meta::detail::GetPointerDepth<std::remove_pointer_t<T>>();
+			}
+			else
+			{
+				return 0;
+			}
+		}
+
+		template<class T>
 		struct TypeKindHolder;
 
 		template<nox::meta::TypeKind _value>
@@ -105,10 +119,10 @@ namespace nox::meta
 		struct TypeKindHolder<char> : ITypeKindHolder<nox::meta::TypeKind::Char> {};
 
 		template<>
-		struct TypeKindHolder<signed char> : ITypeKindHolder<nox::meta::TypeKind::SignedChar> {};
+		struct TypeKindHolder<signed char> : ITypeKindHolder<nox::meta::TypeKind::Int8> {};
 
 		template<>
-		struct TypeKindHolder<unsigned char> : ITypeKindHolder<nox::meta::TypeKind::UnsignedChar> {};
+		struct TypeKindHolder<unsigned char> : ITypeKindHolder<nox::meta::TypeKind::UInt8> {};
 
 		template<>
 		struct TypeKindHolder<char8_t> : ITypeKindHolder<nox::meta::TypeKind::Char8> {};
@@ -121,7 +135,6 @@ namespace nox::meta
 
 		template<>
 		struct TypeKindHolder<wchar_t> : ITypeKindHolder<nox::meta::TypeKind::WideChar> {};
-
 
 		template<>
 		struct TypeKindHolder<std::int16_t> : ITypeKindHolder<nox::meta::TypeKind::Int16> {};
@@ -141,6 +154,17 @@ namespace nox::meta
 		template<>
 		struct TypeKindHolder<std::uint64_t> : ITypeKindHolder<nox::meta::TypeKind::UInt64> {};
 
+#if defined(__SIZEOF_INT128__)
+		template<>
+		struct TypeKindHolder<__int128> : ITypeKindHolder < nox::meta::TypeKind::Int128> {};
+
+		template<>
+		struct TypeKindHolder<unsigned __int128> : ITypeKindHolder<nox::meta::TypeKind::UInt128> {};
+
+		
+#endif // defined(__SIZEOF_INT128__)
+
+
 		template<>
 		struct TypeKindHolder<std::float_t> : ITypeKindHolder<nox::meta::TypeKind::Float> {};
 
@@ -149,6 +173,12 @@ namespace nox::meta
 
 		template<>
 		struct TypeKindHolder<long double> : ITypeKindHolder<nox::meta::TypeKind::LongDouble> {};
+
+		template<>
+		struct TypeKindHolder<long> : ITypeKindHolder<nox::meta::TypeKind::Long> {};
+
+		template<>
+		struct TypeKindHolder<unsigned long> : ITypeKindHolder<nox::meta::TypeKind::UnsignedLong> {};
 
 		//	--- nullptr ---
 		template<>
@@ -171,6 +201,15 @@ namespace nox::meta
 		template<class T> requires(std::is_function_v<T>)
 			struct TypeKindHolder<T> : ITypeKindHolder<nox::meta::TypeKind::Function> {};
 
+		template<class T> requires(std::is_member_function_pointer_v<T>)
+			struct TypeKindHolder<T> : ITypeKindHolder<nox::meta::TypeKind::MemberFunctionPointer> {};
+
+		template<class T> requires(std::is_pointer_v<T> && std::is_function_v<std::remove_pointer_t<T>>)
+			struct TypeKindHolder<T> : ITypeKindHolder<nox::meta::TypeKind::FunctionPointer> {};
+
+		template<class T> requires(std::is_member_object_pointer_v<T>)
+			struct TypeKindHolder<T> : ITypeKindHolder<nox::meta::TypeKind::MemberObjectPointer> {};
+
 		//	--- pointer / reference ---
 		template<class T>
 		struct TypeKindHolder<T*> : ITypeKindHolder<nox::meta::TypeKind::Pointer> {};
@@ -189,18 +228,64 @@ namespace nox::meta
 		struct TypeKindHolder<T[]> : ITypeKindHolder<nox::meta::TypeKind::UnboundedArray> {};
 	}
 
-	template<class _T>
+	template<class T>
 	[[nodiscard]] inline constexpr nox::meta::TypeKind GetTypeKind()noexcept
 	{
-		using T = std::remove_cv_t<_T>;
-		return nox::meta::detail::TypeKindHolder<T>::value;
+		using TT = std::remove_cv_t<T>;
+		return nox::meta::detail::TypeKindHolder<TT>::value;
 	}
 
 	template<class T>
 	[[nodiscard]] inline constexpr nox::meta::TypeAttributeFlag GetTypeAttributeFlags()noexcept
 	{
 		nox::meta::TypeAttributeFlag flags = nox::meta::TypeAttributeFlag::None;
+
+		//		qualifiers
 		flags = nox::meta::detail::BitOrConditional<std::is_const_v<T>, nox::meta::TypeAttributeFlag::Const>(flags);
+		flags = nox::meta::detail::BitOrConditional<std::is_volatile_v<T>, nox::meta::TypeAttributeFlag::Volatile>(flags);
+
+		//		class attributes
+		flags = nox::meta::detail::BitOrConditional<std::is_final_v<T>, nox::meta::TypeAttributeFlag::Final>(flags);
+		flags = nox::meta::detail::BitOrConditional<std::is_abstract_v<T>, nox::meta::TypeAttributeFlag::Abstract>(flags);
+		flags = nox::meta::detail::BitOrConditional<std::is_polymorphic_v<T>, nox::meta::TypeAttributeFlag::Polymorphic>(flags);
+		flags = nox::meta::detail::BitOrConditional<std::is_aggregate_v<T>, nox::meta::TypeAttributeFlag::Aggregate>(flags);
+		flags = nox::meta::detail::BitOrConditional<std::is_trivial_v<T>, nox::meta::TypeAttributeFlag::Trivial>(flags);
+		flags = nox::meta::detail::BitOrConditional<std::is_standard_layout_v<T>, nox::meta::TypeAttributeFlag::StandardLayout>(flags);
+		flags = nox::meta::detail::BitOrConditional<std::is_empty_v<T>, nox::meta::TypeAttributeFlag::Empty>(flags);
+		flags = nox::meta::detail::BitOrConditional<std::is_trivially_copyable_v<T>, nox::meta::TypeAttributeFlag::TriviallyCopyable>(flags);
+
+		//		signed / unsigned
+		flags = nox::meta::detail::BitOrConditional<std::is_signed_v<T>, nox::meta::TypeAttributeFlag::Signed>(flags);
+		flags = nox::meta::detail::BitOrConditional<std::is_unsigned_v<T>, nox::meta::TypeAttributeFlag::Unsigned>(flags);
+
+		//		constructibility
+		flags = nox::meta::detail::BitOrConditional<std::is_default_constructible_v<T>, nox::meta::TypeAttributeFlag::DefaultConstructible>(flags);
+		flags = nox::meta::detail::BitOrConditional<std::is_trivially_default_constructible_v<T>, nox::meta::TypeAttributeFlag::TriviallyDefaultConstructible>(flags);
+		flags = nox::meta::detail::BitOrConditional<std::is_nothrow_default_constructible_v<T>, nox::meta::TypeAttributeFlag::NothrowDefaultConstructible>(flags);
+		flags = nox::meta::detail::BitOrConditional<std::is_copy_constructible_v<T>, nox::meta::TypeAttributeFlag::CopyConstructible>(flags);
+		flags = nox::meta::detail::BitOrConditional<std::is_trivially_copy_constructible_v<T>, nox::meta::TypeAttributeFlag::TriviallyCopyConstructible>(flags);
+		flags = nox::meta::detail::BitOrConditional<std::is_nothrow_copy_constructible_v<T>, nox::meta::TypeAttributeFlag::NothrowCopyConstructible>(flags);
+		flags = nox::meta::detail::BitOrConditional<std::is_move_constructible_v<T>, nox::meta::TypeAttributeFlag::MoveConstructible>(flags);
+		flags = nox::meta::detail::BitOrConditional<std::is_trivially_move_constructible_v<T>, nox::meta::TypeAttributeFlag::TriviallyMoveConstructible>(flags);
+		flags = nox::meta::detail::BitOrConditional<std::is_nothrow_move_constructible_v<T>, nox::meta::TypeAttributeFlag::NothrowMoveConstructible>(flags);
+		
+		//		destructibility
+		flags = nox::meta::detail::BitOrConditional<std::is_destructible_v<T>, nox::meta::TypeAttributeFlag::Destructible>(flags);
+		flags = nox::meta::detail::BitOrConditional<std::is_trivially_destructible_v<T>, nox::meta::TypeAttributeFlag::TriviallyDestructible>(flags);
+		flags = nox::meta::detail::BitOrConditional<std::is_nothrow_destructible_v<T>, nox::meta::TypeAttributeFlag::NothrowDestructible>(flags);
+		flags = nox::meta::detail::BitOrConditional<std::has_virtual_destructor_v<T>, nox::meta::TypeAttributeFlag::HasVirtualDestructor>(flags);
+
+		//		assignability
+		flags = nox::meta::detail::BitOrConditional<std::is_copy_assignable_v<T>, nox::meta::TypeAttributeFlag::CopyAssignable>(flags);
+		flags = nox::meta::detail::BitOrConditional<std::is_trivially_copy_assignable_v<T>, nox::meta::TypeAttributeFlag::TriviallyCopyAssignable>(flags);
+		flags = nox::meta::detail::BitOrConditional<std::is_nothrow_copy_assignable_v<T>, nox::meta::TypeAttributeFlag::NothrowCopyAssignable>(flags);
+		flags = nox::meta::detail::BitOrConditional<std::is_move_assignable_v<T>, nox::meta::TypeAttributeFlag::MoveAssignable>(flags);
+		flags = nox::meta::detail::BitOrConditional<std::is_trivially_move_assignable_v<T>, nox::meta::TypeAttributeFlag::TriviallyMoveAssignable>(flags);
+		flags = nox::meta::detail::BitOrConditional<std::is_nothrow_move_assignable_v<T>, nox::meta::TypeAttributeFlag::NothrowMoveAssignable>(flags);
+
+		//		swappability
+		flags = nox::meta::detail::BitOrConditional<std::is_swappable_v<T>, nox::meta::TypeAttributeFlag::Swappable>(flags);
+		flags = nox::meta::detail::BitOrConditional<std::is_nothrow_swappable_v<T>, nox::meta::TypeAttributeFlag::NothrowSwappable>(flags);
 
 		return flags;
 	}
