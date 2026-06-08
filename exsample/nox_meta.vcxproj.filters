@@ -30,7 +30,7 @@
     <ClInclude Include="exsample.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="nox_meta_type_traits.h">
+    <ClInclude Include="..\include\nox_meta\nox_meta_type_traits.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

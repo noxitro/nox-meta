@@ -6,6 +6,7 @@
 #include	<string_view>
 #include	<span>
 #include	<memory>
+#include	<functional>
 #include	"nox_meta_utility.h"
 #include	"nox_meta_function_signature.h"
 #include	"nox_meta_type_traits.h"
@@ -13,16 +14,88 @@
 namespace nox::meta
 {
 	//	forward declaration
-	struct IType;
+	class IType;
 	class Type;
+
 	inline constexpr const nox::meta::Type& GetInvalidType()noexcept;
 
 	template<class T>
 	[[nodiscard]]
 	inline constexpr const nox::meta::Type& Typeof()noexcept;
 
+	template<template<class...> class T>
 	[[nodiscard]]
-	inline constexpr  bool operator==(const nox::meta::IType& a, const nox::meta::IType& b)noexcept;
+	inline constexpr const nox::meta::IType& Typeof()noexcept;
+
+	template<template<template<class...> class> class T>
+	[[nodiscard]]
+	inline constexpr const nox::meta::IType& Typeof()noexcept;
+
+	template<template<template<template<class...> class> class> class T>
+	[[nodiscard]]
+	inline constexpr const nox::meta::IType& Typeof()noexcept;
+
+	template<template<auto, class, class...> class T>
+	[[nodiscard]]
+	inline constexpr const nox::meta::IType& Typeof()noexcept;
+
+	template<template<class, auto, auto...> class T>
+	[[nodiscard]]
+	inline constexpr const nox::meta::IType& Typeof()noexcept;
+
+	template<template<class, auto, class, class...> class T>
+	[[nodiscard]]
+	inline constexpr const nox::meta::IType& Typeof()noexcept;
+
+	template<template<auto, class, auto, auto...> class T>
+	[[nodiscard]]
+	inline constexpr const nox::meta::IType& Typeof()noexcept;
+
+	template<template<class, auto, class, auto, auto...> class T>
+	[[nodiscard]]
+	inline constexpr const nox::meta::IType& Typeof()noexcept;
+
+	template<template<auto, class, auto, class> class T>
+	[[nodiscard]]
+	inline constexpr const nox::meta::IType& Typeof()noexcept;
+
+	template<template<auto...> class T>
+	[[nodiscard]]
+	inline constexpr const nox::meta::IType& Typeof()noexcept;
+
+	template<template<template<class...> class, class, class...> class T>
+	[[nodiscard]]
+	inline constexpr const nox::meta::IType& Typeof()noexcept;
+
+	template<template<template<class...> class, auto, auto...> class T>
+	[[nodiscard]]
+	inline constexpr const nox::meta::IType& Typeof()noexcept;
+
+	template<template<template<template<class...> class> class, class, class...> class T>
+	[[nodiscard]]
+	inline constexpr const nox::meta::IType& Typeof()noexcept;
+
+	template<template<template<template<class...> class> class, auto, auto...> class T>
+	[[nodiscard]]
+	inline constexpr const nox::meta::IType& Typeof()noexcept;
+
+	template<template<template<auto...> class> class T>
+	[[nodiscard]]
+	inline constexpr const nox::meta::IType& Typeof()noexcept;
+
+	template<template<template<auto...> class, class, class...> class T>
+	[[nodiscard]]
+	inline constexpr const nox::meta::IType& Typeof()noexcept;
+
+	template<template<template<auto...> class, auto, auto...> class T>
+	[[nodiscard]]
+	inline constexpr const nox::meta::IType& Typeof()noexcept;
+
+	[[nodiscard]]
+	inline constexpr bool operator==(const nox::meta::IType& a, const nox::meta::IType& b)noexcept
+	{
+		return &a == &b;
+	}
 
 	constexpr std::size_t k_max_pointer_depth = 1;
 
@@ -30,8 +103,8 @@ namespace nox::meta
 	{
 		struct TypeDesc
 		{
-			nox::meta::TypeKind kind;
-			nox::meta::TypeAttributeFlag attribute_flags;
+			::nox::meta::TypeKind kind;
+			::nox::meta::TypeAttributeFlag attribute_flags;
 			std::size_t size;
 			std::size_t alignment;
 			std::uint16_t array_rank;
@@ -41,25 +114,26 @@ namespace nox::meta
 			void* (* const create_object_placement)(void*);
 			void (* const destroy_at)(void*);
 
-			bool (*is_convertible_functor)(const nox::meta::Type&, const nox::meta::Type&)noexcept;
+			bool (*is_convertible_functor)(const ::nox::meta::Type&, const ::nox::meta::Type&)noexcept;
 
 			std::uint8_t argument_length;
-			std::span<const std::reference_wrapper<const nox::meta::Type>>(* const get_argument_type_list)(const Type& self)noexcept;
-			const nox::meta::Type& remove_pointer_type;
-			const nox::meta::Type& result_type;
-			const nox::meta::Type& remove_element_type;
-			const nox::meta::Type& remove_all_element_type;
-			const nox::meta::Type& underlying_type;
-			const nox::meta::Type& add_const_type;
-			const nox::meta::Type& remove_const_type;
-			const nox::meta::Type& add_volatile_type;
-			const nox::meta::Type& remove_volatile_type;
-			const nox::meta::Type& remove_reference_type;
-			const nox::meta::Type& add_lvalue_reference_type;
-			const nox::meta::Type& add_rvalue_reference_type;
-			const nox::meta::Type& remove_all_modifiers_type;
-			const nox::meta::Type& owner_type;
-			const nox::meta::Type& add_pointer_type;
+			std::span<const std::reference_wrapper<const ::nox::meta::Type>>(* const get_argument_type_list)(const ::nox::meta::Type& self)noexcept;
+			const ::nox::meta::Type& remove_pointer_type;
+			const ::nox::meta::Type& result_type;
+			const ::nox::meta::Type& remove_element_type;
+			const ::nox::meta::Type& remove_all_element_type;
+			const ::nox::meta::Type& underlying_type;
+			const ::nox::meta::Type& add_const_type;
+			const ::nox::meta::Type& remove_const_type;
+			const ::nox::meta::Type& add_volatile_type;
+			const ::nox::meta::Type& remove_volatile_type;
+			const ::nox::meta::Type& remove_reference_type;
+			const ::nox::meta::Type& add_lvalue_reference_type;
+			const ::nox::meta::Type& add_rvalue_reference_type;
+			const ::nox::meta::Type& remove_all_modifiers_type;
+			const ::nox::meta::Type& owner_type;
+			const ::nox::meta::Type& add_pointer_type;
+			const ::nox::meta::IType& template_of_type;
 		};
 
 		enum class DerivedOption : std::uint8_t
@@ -72,55 +146,57 @@ namespace nox::meta
 		};
 
 		template<class T>
-		inline constexpr const nox::meta::Type& GetRemovePointerType()noexcept;
+		inline constexpr const ::nox::meta::Type& GetRemovePointerType()noexcept;
 		template<class T>
-		inline constexpr const nox::meta::Type& GetResultType()noexcept;
+		inline constexpr const ::nox::meta::Type& GetResultType()noexcept;
 		template<class T>
-		inline constexpr const nox::meta::Type& GetRemoveExtentType()noexcept;
+		inline constexpr const ::nox::meta::Type& GetRemoveExtentType()noexcept;
 		template<class T>
-		inline constexpr const nox::meta::Type& GetRemoveAllExtentType()noexcept;
+		inline constexpr const ::nox::meta::Type& GetRemoveAllExtentType()noexcept;
 		template<class T>
-		inline constexpr const nox::meta::Type& GetUnderlyingType()noexcept;
+		inline constexpr const ::nox::meta::Type& GetUnderlyingType()noexcept;
 		template<class T>
-		inline constexpr const nox::meta::Type& GetAddConstType()noexcept;
+		inline constexpr const ::nox::meta::Type& GetAddConstType()noexcept;
 		template<class T>
-		inline constexpr const nox::meta::Type& GetRemoveConstType()noexcept;
+		inline constexpr const ::nox::meta::Type& GetRemoveConstType()noexcept;
 		template<class T>
-		inline constexpr const nox::meta::Type& GetAddVolatileType()noexcept;
+		inline constexpr const ::nox::meta::Type& GetAddVolatileType()noexcept;
 		template<class T>
-		inline constexpr const nox::meta::Type& GetRemoveVolatileType()noexcept;
+		inline constexpr const ::nox::meta::Type& GetRemoveVolatileType()noexcept;
 		template<class T>
-		inline constexpr const nox::meta::Type& GetRemoveReferenceType()noexcept;
+		inline constexpr const ::nox::meta::Type& GetRemoveReferenceType()noexcept;
 		template<class T>
-		inline constexpr const nox::meta::Type& GetAddLValueReferenceType()noexcept;
+		inline constexpr const ::nox::meta::Type& GetAddLValueReferenceType()noexcept;
 		template<class T>
-		inline constexpr const nox::meta::Type& GetAddRValueReferenceType()noexcept;
+		inline constexpr const ::nox::meta::Type& GetAddRValueReferenceType()noexcept;
 		template<class T>
-		inline constexpr const nox::meta::Type& GetRemoveAllModifiersType()noexcept;
+		inline constexpr const ::nox::meta::Type& GetRemoveAllModifiersType()noexcept;
 
 		template<nox::meta::function_signature::concepts::FunctionSignatureType T>
-		inline constexpr std::array<std::reference_wrapper<const nox::meta::Type>, nox::meta::function_signature::FunctionArgsLength<T>> GetArgumentTypeList()noexcept;
+		inline constexpr std::array<std::reference_wrapper<const ::nox::meta::Type>, nox::meta::function_signature::FunctionArgsLength<T>> GetArgumentTypeList()noexcept;
 
 		template<class T>
-		inline constexpr const nox::meta::Type& GetOwnerType()noexcept;
+		inline constexpr const ::nox::meta::Type& GetOwnerType()noexcept;
 		template<class T>
-		inline constexpr const nox::meta::Type& GetAddPointerType()noexcept;
+		inline constexpr const ::nox::meta::Type& GetAddPointerType()noexcept;
+		template<class T>
+		inline constexpr const ::nox::meta::IType& GetTemplateOfType()noexcept;
 
 		template<class T>
-		inline constexpr const nox::meta::Type& GetDecayType()noexcept
+		inline constexpr const ::nox::meta::Type& GetDecayType()noexcept
 		{
 			if constexpr (std::is_same_v<T, std::decay_t<T>> == false)
 			{
-				return nox::meta::Typeof<std::decay_t<T>>();
+				return ::nox::meta::Typeof<std::decay_t<T>>();
 			}
 			else 
 			{
-				return nox::meta::GetInvalidType();
+				return ::nox::meta::GetInvalidType();
 			}
 		}
 
 		/// @brief 無駄に増やさないためのダミー
-		inline constexpr std::span<const std::reference_wrapper<const nox::meta::Type>> GetArgumentTypeListInvalid([[maybe_unused]] const nox::meta::Type&)noexcept
+		inline constexpr std::span<const std::reference_wrapper<const ::nox::meta::Type>> GetArgumentTypeListInvalid([[maybe_unused]] const ::nox::meta::Type&)noexcept
 		{
 			return {};
 		}
@@ -195,28 +271,385 @@ namespace nox::meta
 		}
 	}
 
-	struct IType
+	class IType
 	{
-		//inline constexpr IType()noexcept = default;
-		//inline constexpr ~IType()noexcept = default;
-		//inline constexpr IType(const IType&)noexcept = delete;
-		//inline constexpr IType(IType&&)noexcept = delete;
+	public:
+		inline constexpr explicit IType(std::string_view name)noexcept :
+			name_(name)
+		{
+		}
 
-		//inline constexpr IType& operator=(const IType&)noexcept = delete;
+		[[nodiscard]] inline constexpr std::string_view GetName()const noexcept { return name_; }
+	protected:
+		std::string_view name_;
 	};
 
-	class Type : nox::meta::IType
+	namespace detail
+	{
+		template<template<class...> class T>
+		struct TemplateTypeImpl_0 : public ::nox::meta::IType
+		{
+		public:
+			inline constexpr TemplateTypeImpl_0()noexcept :
+				::nox::meta::IType(::nox::meta::detail::GetTypeName<T>())
+			{
+			}
+		};
+
+
+		template<template<template<class...> class> class T>
+		struct TemplateTypeImpl_1 : public ::nox::meta::IType
+		{
+		public:
+			inline constexpr TemplateTypeImpl_1()noexcept :
+				::nox::meta::IType(::nox::meta::detail::GetTypeName<T>())
+			{
+			}
+		};
+
+		template<template<template<template<class...> class> class> class T>
+		struct TemplateTypeImpl_2 : public ::nox::meta::IType
+		{
+		public:
+			inline constexpr TemplateTypeImpl_2()noexcept :
+				::nox::meta::IType(::nox::meta::detail::GetTypeName<T>())
+			{
+			}
+		};
+
+		template<template<auto...> class T>
+		struct TemplateTypeImpl_0_Auto : public ::nox::meta::IType
+		{
+		public:
+			inline constexpr TemplateTypeImpl_0_Auto()noexcept :
+				::nox::meta::IType(::nox::meta::detail::GetTypeName<T>())
+			{
+			}
+		};
+
+		template<template<auto, class, class...> class T>
+		struct TemplateTypeImpl_0_AutoClassPack : public ::nox::meta::IType
+		{
+		public:
+			inline constexpr TemplateTypeImpl_0_AutoClassPack()noexcept :
+				::nox::meta::IType(::nox::meta::detail::GetTypeName<T>())
+			{
+			}
+		};
+
+		template<template<class, auto, auto...> class T>
+		struct TemplateTypeImpl_0_ClassAutoPack : public ::nox::meta::IType
+		{
+		public:
+			inline constexpr TemplateTypeImpl_0_ClassAutoPack()noexcept :
+				::nox::meta::IType(::nox::meta::detail::GetTypeName<T>())
+			{
+			}
+		};
+
+		template<template<class, auto, class, class...> class T>
+		struct TemplateTypeImpl_0_ClassAutoClassPack : public ::nox::meta::IType
+		{
+		public:
+			inline constexpr TemplateTypeImpl_0_ClassAutoClassPack()noexcept :
+				::nox::meta::IType(::nox::meta::detail::GetTypeName<T>())
+			{
+			}
+		};
+
+		template<template<auto, class, auto, auto...> class T>
+		struct TemplateTypeImpl_0_AutoClassAutoPack : public ::nox::meta::IType
+		{
+		public:
+			inline constexpr TemplateTypeImpl_0_AutoClassAutoPack()noexcept :
+				::nox::meta::IType(::nox::meta::detail::GetTypeName<T>())
+			{
+			}
+		};
+
+		template<template<class, auto, class, auto, auto...> class T>
+		struct TemplateTypeImpl_0_ClassAutoClassAutoPack : public ::nox::meta::IType
+		{
+		public:
+			inline constexpr TemplateTypeImpl_0_ClassAutoClassAutoPack()noexcept :
+				::nox::meta::IType(::nox::meta::detail::GetTypeName<T>())
+			{
+			}
+		};
+
+		template<template<auto, class, auto, class> class T>
+		struct TemplateTypeImpl_0_AutoClassAutoClass : public ::nox::meta::IType
+		{
+		public:
+			inline constexpr TemplateTypeImpl_0_AutoClassAutoClass()noexcept :
+				::nox::meta::IType(::nox::meta::detail::GetTypeName<T>())
+			{
+			}
+		};
+
+		template<template<template<class...> class, class, class...> class T>
+		struct TemplateTypeImpl_1_ClassPackArgs : public ::nox::meta::IType
+		{
+		public:
+			inline constexpr TemplateTypeImpl_1_ClassPackArgs()noexcept :
+				::nox::meta::IType(::nox::meta::detail::GetTypeName<T>())
+			{
+			}
+		};
+
+		template<template<template<class...> class, auto, auto...> class T>
+		struct TemplateTypeImpl_1_AutoPackArgs : public ::nox::meta::IType
+		{
+		public:
+			inline constexpr TemplateTypeImpl_1_AutoPackArgs()noexcept :
+				::nox::meta::IType(::nox::meta::detail::GetTypeName<T>())
+			{
+			}
+		};
+
+		template<template<template<template<class...> class> class, class, class...> class T>
+		struct TemplateTypeImpl_2_ClassPackArgs : public ::nox::meta::IType
+		{
+		public:
+			inline constexpr TemplateTypeImpl_2_ClassPackArgs()noexcept :
+				::nox::meta::IType(::nox::meta::detail::GetTypeName<T>())
+			{
+			}
+		};
+
+		template<template<template<template<class...> class> class, auto, auto...> class T>
+		struct TemplateTypeImpl_2_AutoPackArgs : public ::nox::meta::IType
+		{
+		public:
+			inline constexpr TemplateTypeImpl_2_AutoPackArgs()noexcept :
+				::nox::meta::IType(::nox::meta::detail::GetTypeName<T>())
+			{
+			}
+		};
+
+		template<template<template<auto...> class> class T>
+		struct TemplateTypeImpl_1_InnerAuto : public ::nox::meta::IType
+		{
+		public:
+			inline constexpr TemplateTypeImpl_1_InnerAuto()noexcept :
+				::nox::meta::IType(::nox::meta::detail::GetTypeName<T>())
+			{
+			}
+		};
+
+		template<template<template<auto...> class, class, class...> class T>
+		struct TemplateTypeImpl_1_InnerAutoClassPackArgs : public ::nox::meta::IType
+		{
+		public:
+			inline constexpr TemplateTypeImpl_1_InnerAutoClassPackArgs()noexcept :
+				::nox::meta::IType(::nox::meta::detail::GetTypeName<T>())
+			{
+			}
+		};
+
+		template<template<template<auto...> class, auto, auto...> class T>
+		struct TemplateTypeImpl_1_InnerAutoAutoPackArgs : public ::nox::meta::IType
+		{
+		public:
+			inline constexpr TemplateTypeImpl_1_InnerAutoAutoPackArgs()noexcept :
+				::nox::meta::IType(::nox::meta::detail::GetTypeName<T>())
+			{
+			}
+		};
+
+		template<class T>
+		struct TemplateOfTypeResolver
+		{
+			[[nodiscard]]
+			static inline constexpr const ::nox::meta::IType& Get()noexcept
+			{
+				return reinterpret_cast<const ::nox::meta::IType&>(::nox::meta::GetInvalidType());
+			}
+		};
+
+		template<template<class...> class T, class... Args>
+		struct TemplateOfTypeResolver<T<Args...>>
+		{
+			[[nodiscard]]
+			static inline constexpr const ::nox::meta::IType& Get()noexcept
+			{
+				return ::nox::meta::Typeof<T>();
+			}
+		};
+
+		template<template<auto...> class T, auto... Values>
+		struct TemplateOfTypeResolver<T<Values...>>
+		{
+			[[nodiscard]]
+			static inline constexpr const ::nox::meta::IType& Get()noexcept
+			{
+				return ::nox::meta::Typeof<T>();
+			}
+		};
+
+		template<template<auto, class, class...> class T, auto Value0, class Type0, class... Types>
+		struct TemplateOfTypeResolver<T<Value0, Type0, Types...>>
+		{
+			[[nodiscard]]
+			static inline constexpr const ::nox::meta::IType& Get()noexcept
+			{
+				return ::nox::meta::Typeof<T>();
+			}
+		};
+
+		template<template<class, auto, auto...> class T, class Type0, auto Value0, auto... Values>
+		struct TemplateOfTypeResolver<T<Type0, Value0, Values...>>
+		{
+			[[nodiscard]]
+			static inline constexpr const ::nox::meta::IType& Get()noexcept
+			{
+				return ::nox::meta::Typeof<T>();
+			}
+		};
+
+		template<template<class, auto, class, class...> class T, class Type0, auto Value0, class Type1, class... Types>
+		struct TemplateOfTypeResolver<T<Type0, Value0, Type1, Types...>>
+		{
+			[[nodiscard]]
+			static inline constexpr const ::nox::meta::IType& Get()noexcept
+			{
+				return ::nox::meta::Typeof<T>();
+			}
+		};
+
+		template<template<auto, class, auto, auto...> class T, auto Value0, class Type0, auto Value1, auto... Values>
+		struct TemplateOfTypeResolver<T<Value0, Type0, Value1, Values...>>
+		{
+			[[nodiscard]]
+			static inline constexpr const ::nox::meta::IType& Get()noexcept
+			{
+				return ::nox::meta::Typeof<T>();
+			}
+		};
+
+		template<template<class, auto, class, auto, auto...> class T, class Type0, auto Value0, class Type1, auto Value1, auto... Values>
+		struct TemplateOfTypeResolver<T<Type0, Value0, Type1, Value1, Values...>>
+		{
+			[[nodiscard]]
+			static inline constexpr const ::nox::meta::IType& Get()noexcept
+			{
+				return ::nox::meta::Typeof<T>();
+			}
+		};
+
+		template<template<auto, class, auto, class> class T, auto Value0, class Type0, auto Value1, class Type1>
+		struct TemplateOfTypeResolver<T<Value0, Type0, Value1, Type1>>
+		{
+			[[nodiscard]]
+			static inline constexpr const ::nox::meta::IType& Get()noexcept
+			{
+				return ::nox::meta::Typeof<T>();
+			}
+		};
+
+		template<template<template<class...> class> class T, template<class...> class U>
+		struct TemplateOfTypeResolver<T<U>>
+		{
+			[[nodiscard]]
+			static inline constexpr const ::nox::meta::IType& Get()noexcept
+			{
+				return ::nox::meta::Typeof<T>();
+			}
+		};
+
+		template<template<template<class...> class, class, class...> class T, template<class...> class U, class Arg0, class... Args>
+		struct TemplateOfTypeResolver<T<U, Arg0, Args...>>
+		{
+			[[nodiscard]]
+			static inline constexpr const ::nox::meta::IType& Get()noexcept
+			{
+				return ::nox::meta::Typeof<T>();
+			}
+		};
+
+		template<template<template<class...> class, auto, auto...> class T, template<class...> class U, auto Value0, auto... Values>
+		struct TemplateOfTypeResolver<T<U, Value0, Values...>>
+		{
+			[[nodiscard]]
+			static inline constexpr const ::nox::meta::IType& Get()noexcept
+			{
+				return ::nox::meta::Typeof<T>();
+			}
+		};
+
+		template<template<template<template<class...> class> class> class T, template<template<class...> class> class U>
+		struct TemplateOfTypeResolver<T<U>>
+		{
+			[[nodiscard]]
+			static inline constexpr const ::nox::meta::IType& Get()noexcept
+			{
+				return ::nox::meta::Typeof<T>();
+			}
+		};
+
+		template<template<template<template<class...> class> class, class, class...> class T, template<template<class...> class> class U, class Arg0, class... Args>
+		struct TemplateOfTypeResolver<T<U, Arg0, Args...>>
+		{
+			[[nodiscard]]
+			static inline constexpr const ::nox::meta::IType& Get()noexcept
+			{
+				return ::nox::meta::Typeof<T>();
+			}
+		};
+
+		template<template<template<template<class...> class> class, auto, auto...> class T, template<template<class...> class> class U, auto Value0, auto... Values>
+		struct TemplateOfTypeResolver<T<U, Value0, Values...>>
+		{
+			[[nodiscard]]
+			static inline constexpr const ::nox::meta::IType& Get()noexcept
+			{
+				return ::nox::meta::Typeof<T>();
+			}
+		};
+
+		template<template<template<auto...> class> class T, template<auto...> class U>
+		struct TemplateOfTypeResolver<T<U>>
+		{
+			[[nodiscard]]
+			static inline constexpr const ::nox::meta::IType& Get()noexcept
+			{
+				return ::nox::meta::Typeof<T>();
+			}
+		};
+
+		template<template<template<auto...> class, class, class...> class T, template<auto...> class U, class Arg0, class... Args>
+		struct TemplateOfTypeResolver<T<U, Arg0, Args...>>
+		{
+			[[nodiscard]]
+			static inline constexpr const ::nox::meta::IType& Get()noexcept
+			{
+				return ::nox::meta::Typeof<T>();
+			}
+		};
+
+		template<template<template<auto...> class, auto, auto...> class T, template<auto...> class U, auto Value0, auto... Values>
+		struct TemplateOfTypeResolver<T<U, Value0, Values...>>
+		{
+			[[nodiscard]]
+			static inline constexpr const ::nox::meta::IType& Get()noexcept
+			{
+				return ::nox::meta::Typeof<T>();
+			}
+		};
+	}
+
+	class Type : public ::nox::meta::IType
 	{
 	public:
 		[[nodiscard]]
-		inline constexpr explicit Type(const nox::meta::detail::TypeDesc& desc)noexcept :
+		inline constexpr explicit Type(const ::nox::meta::detail::TypeDesc& desc)noexcept :
+			::nox::meta::IType(desc.name),
 			kind_(desc.kind),
 			attribute_flags_(desc.attribute_flags),
 			size_(desc.size),
 			alignment_(desc.alignment),
 			array_rank_(desc.array_rank),
 			array_extent_(desc.array_extent),
-			name_(desc.name),
 			create_object_(desc.create_object),
 			create_object_placement_(desc.create_object_placement),
 			destroy_at_(desc.destroy_at),
@@ -237,7 +670,8 @@ namespace nox::meta
 			add_rvalue_reference_type_(desc.add_rvalue_reference_type),
 			remove_all_modifiers_type_(desc.remove_all_modifiers_type),
 			owner_type_(desc.owner_type),
-			add_pointer_type_(desc.add_pointer_type)
+			add_pointer_type_(desc.add_pointer_type),
+			template_of_type_(desc.template_of_type)
 		{
 		}
 
@@ -247,13 +681,12 @@ namespace nox::meta
 
 		inline constexpr Type& operator=(const Type&)noexcept = delete;
 
-		[[nodiscard]] inline constexpr nox::meta::TypeKind GetKind()const noexcept { return kind_; }
-		[[nodiscard]] inline constexpr nox::meta::TypeAttributeFlag GetAttributeFlags()const noexcept { return attribute_flags_; }
+		[[nodiscard]] inline constexpr ::nox::meta::TypeKind GetKind()const noexcept { return kind_; }
+		[[nodiscard]] inline constexpr ::nox::meta::TypeAttributeFlag GetAttributeFlags()const noexcept { return attribute_flags_; }
 		[[nodiscard]] inline constexpr std::size_t GetSize()const noexcept { return size_; }
 		[[nodiscard]] inline constexpr std::size_t GetAlignment()const noexcept { return alignment_; }
 		[[nodiscard]] inline constexpr std::uint16_t GetArrayRank()const noexcept { return array_rank_; }
 		[[nodiscard]] inline constexpr std::uint32_t GetArrayExtent()const noexcept { return array_extent_; }
-		[[nodiscard]] inline constexpr std::string_view GetName()const noexcept { return name_; }
 		[[nodiscard]] inline constexpr void* CreateObject()const noexcept { return create_object_(); }
 		[[nodiscard]] inline constexpr void* CreateObject(std::align_val_t alignment)const noexcept { return create_object_(); }
 		[[nodiscard]] inline constexpr void* CreateObject(std::align_val_t alignment, const std::nothrow_t&)const noexcept { return create_object_(); }
@@ -263,20 +696,22 @@ namespace nox::meta
 		[[nodiscard]] inline constexpr bool IsConvertibleTo(const nox::meta::Type& to)const noexcept { return is_convertible_functor_(*this, to); }
 		[[nodiscard]] inline constexpr std::uint8_t GetArgumentLength()const noexcept { return argument_length_; }
 		[[nodiscard]] inline constexpr std::span<const std::reference_wrapper<const nox::meta::Type>> GetArgumentTypeList()const noexcept { return get_argument_type_list_(*this); }
-		[[nodiscard]] inline constexpr const nox::meta::Type& RemovePointerType()const noexcept { return remove_pointer_type_; }
-		[[nodiscard]] inline constexpr const nox::meta::Type& ResultType()const noexcept { return result_type_; }
-		[[nodiscard]] inline constexpr const nox::meta::Type& RemoveElementType()const noexcept { return remove_element_type_; }
-		[[nodiscard]] inline constexpr const nox::meta::Type& RemoveAllElementType()const noexcept { return remove_all_element_type_; }
-		[[nodiscard]] inline constexpr const nox::meta::Type& UnderlyingType()const noexcept { return underlying_type_; }
-		[[nodiscard]] inline constexpr const nox::meta::Type& AddConstType()const noexcept { return add_const_type_; }
-		[[nodiscard]] inline constexpr const nox::meta::Type& RemoveConstType()const noexcept { return remove_const_type_; }
-		[[nodiscard]] inline constexpr const nox::meta::Type& AddVolatileType()const noexcept { return add_volatile_type_; }
-		[[nodiscard]] inline constexpr const nox::meta::Type& RemoveVolatileType()const noexcept { return remove_volatile_type_; }
-		[[nodiscard]] inline constexpr const nox::meta::Type& RemoveReferenceType()const noexcept { return remove_reference_type_; }
-		[[nodiscard]] inline constexpr const nox::meta::Type& AddLValueReferenceType()const noexcept { return add_lvalue_reference_type_; }
-		[[nodiscard]] inline constexpr const nox::meta::Type& AddRValueReferenceType()const noexcept { return add_rvalue_reference_type_; }
-		[[nodiscard]] inline constexpr const nox::meta::Type& RemoveAllModifiersType()const noexcept { return remove_all_modifiers_type_; }
-		[[nodiscard]] inline constexpr const nox::meta::Type& GetAddPointerType()const noexcept { return add_pointer_type_; }
+		[[nodiscard]] inline constexpr const ::nox::meta::Type& GetRemovePointerType()const noexcept { return remove_pointer_type_; }
+		[[nodiscard]] inline constexpr const ::nox::meta::Type& GetResultType()const noexcept { return result_type_; }
+		[[nodiscard]] inline constexpr const ::nox::meta::Type& GetRemoveElementType()const noexcept { return remove_element_type_; }
+		[[nodiscard]] inline constexpr const ::nox::meta::Type& GetRemoveAllElementType()const noexcept { return remove_all_element_type_; }
+		[[nodiscard]] inline constexpr const ::nox::meta::Type& GetUnderlyingType()const noexcept { return underlying_type_; }
+		[[nodiscard]] inline constexpr const ::nox::meta::Type& GetAddConstType()const noexcept { return add_const_type_; }
+		[[nodiscard]] inline constexpr const ::nox::meta::Type& GetRemoveConstType()const noexcept { return remove_const_type_; }
+		[[nodiscard]] inline constexpr const ::nox::meta::Type& GetAddVolatileType()const noexcept { return add_volatile_type_; }
+		[[nodiscard]] inline constexpr const ::nox::meta::Type& GetRemoveVolatileType()const noexcept { return remove_volatile_type_; }
+		[[nodiscard]] inline constexpr const ::nox::meta::Type& GetRemoveReferenceType()const noexcept { return remove_reference_type_; }
+		[[nodiscard]] inline constexpr const ::nox::meta::Type& GetAddLValueReferenceType()const noexcept { return add_lvalue_reference_type_; }
+		[[nodiscard]] inline constexpr const ::nox::meta::Type& GetAddRValueReferenceType()const noexcept { return add_rvalue_reference_type_; }
+		[[nodiscard]] inline constexpr const ::nox::meta::Type& GetRemoveAllModifiersType()const noexcept { return remove_all_modifiers_type_; }
+		[[nodiscard]] inline constexpr const ::nox::meta::Type& GetAddPointerType()const noexcept { return add_pointer_type_; }
+		[[nodiscard]] inline constexpr const ::nox::meta::Type& GetOwnerType()const noexcept { return owner_type_; }
+		[[nodiscard]] inline constexpr const ::nox::meta::IType& GetTemplateOfType()const noexcept { return template_of_type_; }
 //		[[nodiscard]] inline constexpr bool IsTypeAttributeFlag(nox::meta::TypeAttributeFlag flag)const noexcept { return  }
 
 #pragma region attributes
@@ -366,6 +801,9 @@ namespace nox::meta
 			case nox::meta::TypeKind::Float:
 			case nox::meta::TypeKind::Double:
 			case nox::meta::TypeKind::LongDouble:
+			case nox::meta::TypeKind::Float16:
+			case nox::meta::TypeKind::BFloat16:
+			case nox::meta::TypeKind::Float128:
 				return true;
 			default:
 				return false;
@@ -427,7 +865,7 @@ namespace nox::meta
 #pragma endregion
 
 	private:
-		[[nodiscard]] inline constexpr const nox::meta::Type& GetDerivedType(const nox::meta::detail::DerivedOption option)const noexcept
+		[[nodiscard]] inline constexpr const ::nox::meta::Type& GetDerivedType(const ::nox::meta::detail::DerivedOption option)const noexcept
 		{
 			return result_type_;
 		}
@@ -436,54 +874,48 @@ namespace nox::meta
 	
 		std::size_t size_;
 		std::size_t alignment_;
-		nox::meta::TypeKind kind_;
-		nox::meta::TypeAttributeFlag attribute_flags_;
+		::nox::meta::TypeKind kind_;
+		::nox::meta::TypeAttributeFlag attribute_flags_;
 		std::uint16_t array_rank_;
 		std::uint32_t array_extent_;
-		std::string_view name_;
 
 		void* (* const create_object_)();
 		void* (* const create_object_placement_)(void*);
 		void (* const destroy_at_)(void*);
-		bool (*is_convertible_functor_)(const nox::meta::Type&, const nox::meta::Type&)noexcept;
+		bool (*is_convertible_functor_)(const ::nox::meta::Type&, const ::nox::meta::Type&)noexcept;
 		std::uint8_t argument_length_;
-		std::span<const std::reference_wrapper<const nox::meta::Type>>(* const get_argument_type_list_)(const Type& self)noexcept;
-		const nox::meta::Type& add_pointer_type_;
-		const nox::meta::Type& remove_pointer_type_;
-		const nox::meta::Type& result_type_;
-		const nox::meta::Type& remove_element_type_;
-		const nox::meta::Type& remove_all_element_type_;
-		const nox::meta::Type& underlying_type_;
-		const nox::meta::Type& add_const_type_;
-		const nox::meta::Type& remove_const_type_;
-		const nox::meta::Type& add_volatile_type_;
-		const nox::meta::Type& remove_volatile_type_;
-		const nox::meta::Type& remove_reference_type_;
-		const nox::meta::Type& add_lvalue_reference_type_;
-		const nox::meta::Type& add_rvalue_reference_type_;
-		const nox::meta::Type& remove_all_modifiers_type_;
-		const nox::meta::Type& owner_type_;
+		std::span<const std::reference_wrapper<const ::nox::meta::Type>>(* const get_argument_type_list_)(const ::nox::meta::Type& self)noexcept;
+		const ::nox::meta::Type& add_pointer_type_;
+		const ::nox::meta::Type& remove_pointer_type_;
+		const ::nox::meta::Type& result_type_;
+		const ::nox::meta::Type& remove_element_type_;
+		const ::nox::meta::Type& remove_all_element_type_;
+		const ::nox::meta::Type& underlying_type_;
+		const ::nox::meta::Type& add_const_type_;
+		const ::nox::meta::Type& remove_const_type_;
+		const ::nox::meta::Type& add_volatile_type_;
+		const ::nox::meta::Type& remove_volatile_type_;
+		const ::nox::meta::Type& remove_reference_type_;
+		const ::nox::meta::Type& add_lvalue_reference_type_;
+		const ::nox::meta::Type& add_rvalue_reference_type_;
+		const ::nox::meta::Type& remove_all_modifiers_type_;
+		const ::nox::meta::Type& owner_type_;
+		const ::nox::meta::IType& template_of_type_;
 	};
-
-	[[nodiscard]]
-	inline constexpr bool operator==(const nox::meta::IType& a, const nox::meta::IType& b)noexcept 
-	{
-		return &a == &b; 
-	}
 
 	namespace detail
 	{
-		class InvalidType final : public nox::meta::Type
+		class InvalidType final : public ::nox::meta::Type
 		{
 		public:
 #pragma warning(push)
 #pragma warning(disable:4355) // self-reference in base initializer is intentional for invalid sentinel
 			[[nodiscard]]
 			inline constexpr InvalidType()noexcept :
-				nox::meta::Type(
-					nox::meta::detail::TypeDesc{
-						.kind = nox::meta::TypeKind::Unknown,
-						.attribute_flags = nox::meta::TypeAttributeFlag::None,
+				::nox::meta::Type(
+					::nox::meta::detail::TypeDesc{
+						.kind = ::nox::meta::TypeKind::Unknown,
+						.attribute_flags = ::nox::meta::TypeAttributeFlag::None,
 						.size = 0,
 						.alignment = 0,
 						.array_rank = 0,
@@ -492,7 +924,7 @@ namespace nox::meta
 						.create_object = +[]()->void* { return nullptr; },
 						.create_object_placement = +[](void*)->void* {return nullptr; },
 						.destroy_at = +[](void*) {},
-						.is_convertible_functor = +[](const nox::meta::Type&, const nox::meta::Type&)constexpr noexcept -> bool { return false; },
+						.is_convertible_functor = +[](const ::nox::meta::Type&, const ::nox::meta::Type&)constexpr noexcept -> bool { return false; },
 						.argument_length = 0,
 						.get_argument_type_list = &nox::meta::detail::GetArgumentTypeListInvalid,
 						.remove_pointer_type = *this,
@@ -509,7 +941,8 @@ namespace nox::meta
 						.add_rvalue_reference_type = *this,
 						.remove_all_modifiers_type = *this,
 						.owner_type = *this,
-						.add_pointer_type = *this
+						.add_pointer_type = *this,
+						.template_of_type = *this
 					}
 				)
 			{
@@ -523,11 +956,11 @@ namespace nox::meta
 		};
 
 		template<class T>
-		class TypeImpl : public nox::meta::Type
+		class TypeImpl : public ::nox::meta::Type
 		{
 		public:
 			inline constexpr TypeImpl()noexcept :
-				TypeImpl(0, &nox::meta::detail::GetArgumentTypeListInvalid)
+				TypeImpl(0, &::nox::meta::detail::GetArgumentTypeListInvalid)
 			{
 			}
 
@@ -544,33 +977,34 @@ namespace nox::meta
 				nox::meta::Type(
 					nox::meta::detail::TypeDesc{
 						.kind = nox::meta::GetTypeKind<T>(),
-						.attribute_flags = nox::meta::GetTypeAttributeFlags<T>(),
-						.size = nox::meta::util::SafeSizeof<T>(),
-						.alignment = nox::meta::util::SafeAlignof<T>(),
+						.attribute_flags = ::nox::meta::GetTypeAttributeFlags<T>(),
+						.size = ::nox::meta::util::SafeSizeof<T>(),
+						.alignment = ::nox::meta::util::SafeAlignof<T>(),
 						.array_rank = std::rank_v<T>,
 						.array_extent = std::extent_v<T>,
-						.name = nox::meta::detail::GetTypeName<T>(),
+						.name = ::nox::meta::detail::GetTypeName<T>(),
 						.create_object = &TypeImpl::CreateObject,
 						.create_object_placement = &TypeImpl::ConstructAt,
 						.destroy_at = &TypeImpl::DestroyAt,
 						.is_convertible_functor = &TypeImpl::IsConvertibleImpl,
 						.argument_length = argument_length,
 						.get_argument_type_list = get_argument_type_list,
-						.remove_pointer_type = nox::meta::detail::GetRemovePointerType<T>(),
-						.result_type = nox::meta::detail::GetResultType<T>(),
-						.remove_element_type = nox::meta::detail::GetRemoveExtentType<T>(),
-						.remove_all_element_type = nox::meta::detail::GetRemoveAllExtentType<T>(),
-						.underlying_type = nox::meta::detail::GetUnderlyingType<T>(),
-						.add_const_type = nox::meta::detail::GetAddConstType<T>(),
-						.remove_const_type = nox::meta::detail::GetRemoveConstType<T>(),
-						.add_volatile_type = nox::meta::detail::GetAddVolatileType<T>(),
-						.remove_volatile_type = nox::meta::detail::GetRemoveVolatileType<T>(),
-						.remove_reference_type = nox::meta::detail::GetRemoveReferenceType<T>(),
-						.add_lvalue_reference_type = nox::meta::detail::GetAddLValueReferenceType<T>(),
-						.add_rvalue_reference_type = nox::meta::detail::GetAddRValueReferenceType<T>(),
-						.remove_all_modifiers_type = nox::meta::detail::GetRemoveAllModifiersType<T>(),
-						.owner_type = nox::meta::detail::GetOwnerType<T>(),
-						.add_pointer_type = nox::meta::detail::GetAddPointerType<T>()
+						.remove_pointer_type = ::nox::meta::detail::GetRemovePointerType<T>(),
+						.result_type = ::nox::meta::detail::GetResultType<T>(),
+						.remove_element_type = ::nox::meta::detail::GetRemoveExtentType<T>(),
+						.remove_all_element_type = ::nox::meta::detail::GetRemoveAllExtentType<T>(),
+						.underlying_type = ::nox::meta::detail::GetUnderlyingType<T>(),
+						.add_const_type = ::nox::meta::detail::GetAddConstType<T>(),
+						.remove_const_type = ::nox::meta::detail::GetRemoveConstType<T>(),
+						.add_volatile_type = ::nox::meta::detail::GetAddVolatileType<T>(),
+						.remove_volatile_type = ::nox::meta::detail::GetRemoveVolatileType<T>(),
+						.remove_reference_type = ::nox::meta::detail::GetRemoveReferenceType<T>(),
+						.add_lvalue_reference_type = ::nox::meta::detail::GetAddLValueReferenceType<T>(),
+						.add_rvalue_reference_type = ::nox::meta::detail::GetAddRValueReferenceType<T>(),
+						.remove_all_modifiers_type = ::nox::meta::detail::GetRemoveAllModifiersType<T>(),
+						.owner_type = ::nox::meta::detail::GetOwnerType<T>(),
+						.add_pointer_type = ::nox::meta::detail::GetAddPointerType<T>(),
+						.template_of_type = ::nox::meta::detail::GetTemplateOfType<T>()
 					}
 				)
 			{
@@ -620,57 +1054,26 @@ namespace nox::meta
 		};
 
 		template<class T>
-		class TypeFunction : public nox::meta::detail::TypeImpl<T>
-		{
-
-		};
-
-		template<template<class...> class T>
-		struct TemplateTypeImpl_0 : nox::meta::IType
+		class TypeFunction : public ::nox::meta::detail::TypeImpl<T>
 		{
 		public:
-			
+			inline constexpr TypeFunction()noexcept :
+				TypeImpl<T>(::nox::meta::function_signature::FunctionArgsLength<T>, &GetArgumentTypeList),
+				argument_type_table_(::nox::meta::detail::GetArgumentTypeList<T>())
+			{
+			}
+
+
+		private:
+			static inline constexpr std::span<const std::reference_wrapper<const ::nox::meta::Type>> GetArgumentTypeList(const ::nox::meta::Type& self)noexcept {
+				const TypeFunction<T>& self_impl = static_cast<const TypeFunction<T>&>(self);
+				return std::span(self_impl.argument_type_table_.data(), self_impl.argument_type_table_.size());
+			}
+
+		private:
+			const std::array<std::reference_wrapper<const ::nox::meta::Type>, ::nox::meta::function_signature::FunctionArgsLength<T>> argument_type_table_;
 		};
 
-		template<template<template<class...> class, class...> class T>
-		struct TemplateTypeImpl_1 : nox::meta::IType
-		{
-		public:
-
-		};
-
-		template<template<template<template<class...> class> class, class...> class T>
-		struct TemplateTypeImpl_2 : nox::meta::IType
-		{
-		public:
-
-		};
-
-		template<class, template<template<class...> class, class...> class T>
-		struct TemplateTypeImpl_0_1 : nox::meta::IType
-		{
-		public:
-
-		};
-
-		template<class, template<template<template<class...> class> class, class...> class T>
-		struct TemplateTypeImpl_0_2 : nox::meta::IType
-		{
-		public:
-
-		};
-
-		template<template<class...> class T>
-		struct TemplateTypeHolder_0
-		{
-			static constexpr nox::meta::detail::TemplateTypeImpl_0<T> value{};
-		};
-
-		template<template<template<class...> class, class...> class T>
-		struct TemplateTypeHolder_1
-		{
-			static constexpr nox::meta::detail::TemplateTypeImpl_1<T> value{};
-		};
 	}
 
 	namespace detail
@@ -680,45 +1083,261 @@ namespace nox::meta
 	
 	namespace detail
 	{
-		static constexpr nox::meta::detail::InvalidType k_invalid_type{};
+		static constexpr ::nox::meta::detail::InvalidType k_invalid_type{};
 
 		template<class T>
 		struct TypeHolder
 		{
-			static constexpr nox::meta::detail::TypeImpl<T> value{};
+			static constexpr ::nox::meta::detail::TypeImpl<T> value{};
 
 			constexpr TypeHolder() noexcept = delete;
 			constexpr ~TypeHolder() noexcept = delete;
 		};
+
+		template<template<class...> class T>
+		struct TemplateTypeHolder_0
+		{
+			static constexpr ::nox::meta::detail::TemplateTypeImpl_0<T> value{};
+		};
+
+		template<template<template<class...> class> class T>
+		struct TemplateTypeHolder_1
+		{
+			static constexpr ::nox::meta::detail::TemplateTypeImpl_1<T> value{};
+		};
+
+		template<template<template<template<class...> class> class> class T>
+		struct TemplateTypeHolder_2
+		{
+			static constexpr ::nox::meta::detail::TemplateTypeImpl_2<T> value{};
+		};
+
+		template<template<auto...> class T>
+		struct TemplateTypeHolder_0_Auto
+		{
+			static constexpr ::nox::meta::detail::TemplateTypeImpl_0_Auto<T> value{};
+		};
+
+		template<template<auto, class, class...> class T>
+		struct TemplateTypeHolder_0_AutoClassPack
+		{
+			static constexpr ::nox::meta::detail::TemplateTypeImpl_0_AutoClassPack<T> value{};
+		};
+
+		template<template<class, auto, auto...> class T>
+		struct TemplateTypeHolder_0_ClassAutoPack
+		{
+			static constexpr ::nox::meta::detail::TemplateTypeImpl_0_ClassAutoPack<T> value{};
+		};
+
+		template<template<class, auto, class, class...> class T>
+		struct TemplateTypeHolder_0_ClassAutoClassPack
+		{
+			static constexpr ::nox::meta::detail::TemplateTypeImpl_0_ClassAutoClassPack<T> value{};
+		};
+
+		template<template<auto, class, auto, auto...> class T>
+		struct TemplateTypeHolder_0_AutoClassAutoPack
+		{
+			static constexpr ::nox::meta::detail::TemplateTypeImpl_0_AutoClassAutoPack<T> value{};
+		};
+
+		template<template<class, auto, class, auto, auto...> class T>
+		struct TemplateTypeHolder_0_ClassAutoClassAutoPack
+		{
+			static constexpr ::nox::meta::detail::TemplateTypeImpl_0_ClassAutoClassAutoPack<T> value{};
+		};
+
+		template<template<auto, class, auto, class> class T>
+		struct TemplateTypeHolder_0_AutoClassAutoClass
+		{
+			static constexpr ::nox::meta::detail::TemplateTypeImpl_0_AutoClassAutoClass<T> value{};
+		};
+
+		template<template<template<class...> class, class, class...> class T>
+		struct TemplateTypeHolder_1_ClassPackArgs
+		{
+			static constexpr ::nox::meta::detail::TemplateTypeImpl_1_ClassPackArgs<T> value{};
+		};
+
+		template<template<template<class...> class, auto, auto...> class T>
+		struct TemplateTypeHolder_1_AutoPackArgs
+		{
+			static constexpr ::nox::meta::detail::TemplateTypeImpl_1_AutoPackArgs<T> value{};
+		};
+
+		template<template<template<template<class...> class> class, class, class...> class T>
+		struct TemplateTypeHolder_2_ClassPackArgs
+		{
+			static constexpr ::nox::meta::detail::TemplateTypeImpl_2_ClassPackArgs<T> value{};
+		};
+
+		template<template<template<template<class...> class> class, auto, auto...> class T>
+		struct TemplateTypeHolder_2_AutoPackArgs
+		{
+			static constexpr ::nox::meta::detail::TemplateTypeImpl_2_AutoPackArgs<T> value{};
+		};
+
+		template<template<template<auto...> class> class T>
+		struct TemplateTypeHolder_1_InnerAuto
+		{
+			static constexpr ::nox::meta::detail::TemplateTypeImpl_1_InnerAuto<T> value{};
+		};
+
+		template<template<template<auto...> class, class, class...> class T>
+		struct TemplateTypeHolder_1_InnerAutoClassPackArgs
+		{
+			static constexpr ::nox::meta::detail::TemplateTypeImpl_1_InnerAutoClassPackArgs<T> value{};
+		};
+
+		template<template<template<auto...> class, auto, auto...> class T>
+		struct TemplateTypeHolder_1_InnerAutoAutoPackArgs
+		{
+			static constexpr ::nox::meta::detail::TemplateTypeImpl_1_InnerAutoAutoPackArgs<T> value{};
+		};
+
+
 	}
 
 	[[nodiscard]]
-	inline constexpr const nox::meta::Type& nox::meta::GetInvalidType()noexcept
+	inline constexpr const ::nox::meta::Type& ::nox::meta::GetInvalidType()noexcept
 	{
 		return nox::meta::detail::k_invalid_type;
 	}
 
-	//	template types...
-	template<template<class...> class T>
-	[[nodiscard]]
-	inline constexpr const nox::meta::IType& Typeof()noexcept
-	{
-		return nox::meta::detail::TemplateTypeHolder_0<T>::value;
-	}
-
-	template<template<template<class...> class, class...> class T>
+	/*template<template<template<class...> class, class...> class T>
 	[[nodiscard]]
 	inline constexpr const nox::meta::IType& Typeof()noexcept
 	{
 		return nox::meta::detail::TemplateTypeImpl_1<T>::value;
-	}
+	}*/
 }
 
 template<class T>
 [[nodiscard]]
-inline constexpr const nox::meta::Type& nox::meta::Typeof()noexcept
+inline constexpr const ::nox::meta::Type& ::nox::meta::Typeof()noexcept
 {
 	return nox::meta::detail::TypeHolder<T>::value;
+}
+
+//	template types...
+template<template<class...> class T>
+[[nodiscard]]
+inline constexpr const ::nox::meta::IType& ::nox::meta::Typeof()noexcept
+{
+	return nox::meta::detail::TemplateTypeHolder_0<T>::value;
+}
+
+template<template<template<class...> class> class T>
+[[nodiscard]]
+inline constexpr const ::nox::meta::IType& ::nox::meta::Typeof()noexcept
+{
+	return nox::meta::detail::TemplateTypeHolder_1<T>::value;
+}
+
+template<template<template<template<class...> class> class> class T>
+[[nodiscard]]
+inline constexpr const ::nox::meta::IType& ::nox::meta::Typeof()noexcept
+{
+	return nox::meta::detail::TemplateTypeHolder_2<T>::value;
+}
+
+template<template<auto...> class T>
+[[nodiscard]]
+inline constexpr const ::nox::meta::IType& ::nox::meta::Typeof()noexcept
+{
+	return ::nox::meta::detail::TemplateTypeHolder_0_Auto<T>::value;
+}
+
+template<template<auto, class, class...> class T>
+[[nodiscard]]
+inline constexpr const ::nox::meta::IType& ::nox::meta::Typeof()noexcept
+{
+	return ::nox::meta::detail::TemplateTypeHolder_0_AutoClassPack<T>::value;
+}
+
+template<template<class, auto, auto...> class T>
+[[nodiscard]]
+inline constexpr const ::nox::meta::IType& ::nox::meta::Typeof()noexcept
+{
+	return ::nox::meta::detail::TemplateTypeHolder_0_ClassAutoPack<T>::value;
+}
+
+template<template<class, auto, class, class...> class T>
+[[nodiscard]]
+inline constexpr const ::nox::meta::IType& ::nox::meta::Typeof()noexcept
+{
+	return ::nox::meta::detail::TemplateTypeHolder_0_ClassAutoClassPack<T>::value;
+}
+
+template<template<auto, class, auto, auto...> class T>
+[[nodiscard]]
+inline constexpr const ::nox::meta::IType& ::nox::meta::Typeof()noexcept
+{
+	return ::nox::meta::detail::TemplateTypeHolder_0_AutoClassAutoPack<T>::value;
+}
+
+template<template<class, auto, class, auto, auto...> class T>
+[[nodiscard]]
+inline constexpr const ::nox::meta::IType& ::nox::meta::Typeof()noexcept
+{
+	return ::nox::meta::detail::TemplateTypeHolder_0_ClassAutoClassAutoPack<T>::value;
+}
+
+template<template<auto, class, auto, class> class T>
+[[nodiscard]]
+inline constexpr const ::nox::meta::IType& ::nox::meta::Typeof()noexcept
+{
+	return ::nox::meta::detail::TemplateTypeHolder_0_AutoClassAutoClass<T>::value;
+}
+
+template<template<template<class...> class, class, class...> class T>
+[[nodiscard]]
+inline constexpr const ::nox::meta::IType& ::nox::meta::Typeof()noexcept
+{
+	return ::nox::meta::detail::TemplateTypeHolder_1_ClassPackArgs<T>::value;
+}
+
+template<template<template<class...> class, auto, auto...> class T>
+[[nodiscard]]
+inline constexpr const ::nox::meta::IType& ::nox::meta::Typeof()noexcept
+{
+	return ::nox::meta::detail::TemplateTypeHolder_1_AutoPackArgs<T>::value;
+}
+
+template<template<template<template<class...> class> class, class, class...> class T>
+[[nodiscard]]
+inline constexpr const ::nox::meta::IType& ::nox::meta::Typeof()noexcept
+{
+	return ::nox::meta::detail::TemplateTypeHolder_2_ClassPackArgs<T>::value;
+}
+
+template<template<template<template<class...> class> class, auto, auto...> class T>
+[[nodiscard]]
+inline constexpr const ::nox::meta::IType& ::nox::meta::Typeof()noexcept
+{
+	return ::nox::meta::detail::TemplateTypeHolder_2_AutoPackArgs<T>::value;
+}
+
+template<template<template<auto...> class> class T>
+[[nodiscard]]
+inline constexpr const ::nox::meta::IType& ::nox::meta::Typeof()noexcept
+{
+	return ::nox::meta::detail::TemplateTypeHolder_1_InnerAuto<T>::value;
+}
+
+template<template<template<auto...> class, class, class...> class T>
+[[nodiscard]]
+inline constexpr const ::nox::meta::IType& ::nox::meta::Typeof()noexcept
+{
+	return ::nox::meta::detail::TemplateTypeHolder_1_InnerAutoClassPackArgs<T>::value;
+}
+
+template<template<template<auto...> class, auto, auto...> class T>
+[[nodiscard]]
+inline constexpr const ::nox::meta::IType& ::nox::meta::Typeof()noexcept
+{
+	return ::nox::meta::detail::TemplateTypeHolder_1_InnerAutoAutoPackArgs<T>::value;
 }
 
 template<class T>
@@ -813,27 +1432,40 @@ inline constexpr const nox::meta::Type& nox::meta::detail::GetRemoveAllModifiers
 	return nox::meta::detail::k_invalid_type;
 }
 
-template<nox::meta::function_signature::concepts::FunctionSignatureType T>
-inline constexpr std::array<std::reference_wrapper<const nox::meta::Type>, nox::meta::function_signature::FunctionArgsLength<T>> nox::meta::detail::GetArgumentTypeList()noexcept
+template<::nox::meta::function_signature::concepts::FunctionSignatureType T>
+inline constexpr std::array<std::reference_wrapper<const ::nox::meta::Type>, ::nox::meta::function_signature::FunctionArgsLength<T>> nox::meta::detail::GetArgumentTypeList()noexcept
 {
 	return {};
 }
 
 template<class T>
-inline constexpr const nox::meta::Type& nox::meta::detail::GetOwnerType()noexcept
+inline constexpr const ::nox::meta::Type& ::nox::meta::detail::GetOwnerType()noexcept
 {
-	return nox::meta::detail::k_invalid_type;
+	return ::nox::meta::detail::k_invalid_type;
 }
 
 template<class T>
-inline constexpr const nox::meta::Type& nox::meta::detail::GetAddPointerType()noexcept
+inline constexpr const ::nox::meta::Type& ::nox::meta::detail::GetAddPointerType()noexcept
 {
-	if constexpr (nox::meta::detail::GetPointerDepth<T>() <= nox::meta::k_max_pointer_depth)
+	if constexpr (::nox::meta::detail::GetPointerDepth<T>() <= ::nox::meta::k_max_pointer_depth)
 	{
-		return nox::meta::Typeof<std::add_pointer_t<T>>();
+		return ::nox::meta::Typeof<std::add_pointer_t<T>>();
 	}
 	else
 	{
-		return nox::meta::GetInvalidType();
+		return ::nox::meta::GetInvalidType();
+	}
+}
+
+template<class T>
+inline constexpr const ::nox::meta::IType& ::nox::meta::detail::GetTemplateOfType()noexcept
+{	
+	if constexpr (::nox::meta::detail::IsTemplateInstantiation<T>)
+	{
+		return ::nox::meta::detail::TemplateOfTypeResolver<T>::Get();
+	}
+	else
+	{
+		return ::nox::meta::GetInvalidType();
 	}
 }

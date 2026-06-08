@@ -43,3 +43,6 @@
 /exsample/.vs
 /exsample/exsample/x64/Debug
 /exsample/nox_meta/x64/Debug
+/exsample/exsample/Debug
+/exsample/exsample/Release
+/exsample/exsample/x64/Release

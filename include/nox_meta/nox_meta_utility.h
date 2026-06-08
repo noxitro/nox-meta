@@ -4,6 +4,9 @@
 ///	@brief	utility
 #pragma once
 #include	<string_view>
+#include	<algorithm>
+#include	<ranges>
+#include	<array>
 #include	"nox_meta_definition.h"
 
 namespace nox::meta
@@ -41,26 +44,237 @@ namespace nox::meta
 
 	namespace detail
 	{
-		template<class T>
-		[[nodiscard]] constexpr auto __cdecl GetTypeName(void)noexcept
+		template<class CharT, std::size_t N>
+		struct LiteralBasicString
 		{
+			std::array<CharT, N + 1> value{};
+
+			inline constexpr LiteralBasicString(const CharT(&literal)[N + 1])noexcept
+			{
+				std::ranges::copy(literal, value.data());
+			}
+
+			[[nodiscard]] inline constexpr std::basic_string_view<CharT> view()const noexcept { return std::basic_string_view<CharT>(value.data(), N); }
+			[[nodiscard]] inline constexpr operator std::basic_string_view<CharT>()const noexcept { return view(); }
+
+			[[nodiscard]] inline constexpr bool operator==(const LiteralBasicString&)const noexcept = default;
+		};
+
+		template<class CharT, std::size_t N>
+		LiteralBasicString(const CharT(&)[N]) -> LiteralBasicString<CharT, N - 1>;
+
+		template<std::size_t N>
+		using LiteralString = LiteralBasicString<char, N>;
+
+		template<nox::meta::detail::LiteralString signature>
+		[[nodiscard]] inline constexpr auto GetTypeNameImpl()noexcept
+		{
+			constexpr const std::string_view signature_view = signature.view();
+
 #if defined(__clang__)
-			constexpr std::string_view signature = __PRETTY_FUNCTION__;
-			constexpr std::string_view preSignature = "auto nox::meta::detail::GetTypeName()[T = ";
-			constexpr std::string_view lastSignature = "]";
+			constexpr std::string_view key_begin = " = ";
+			constexpr std::size_t begin_mark = signature_view.find(key_begin);
+			constexpr std::size_t begin = begin_mark + key_begin.size();
+			constexpr std::size_t end = signature_view.rfind(']');
+
+			static_assert(begin_mark != std::string_view::npos, "GetTypeName parse failed (begin mark)");
 #else
-			constexpr std::string_view signature = __FUNCSIG__;
-			constexpr std::string_view preSignature = "auto __cdecl nox::meta::detail::GetTypeName<";
-			constexpr std::string_view lastSignature = ">(void) noexcept";
+			constexpr std::string_view key_begin = "GetTypeName<";
+			constexpr std::string_view key_end = ">(void)";
+			constexpr std::size_t begin_mark = signature_view.find(key_begin);
+			constexpr std::size_t begin = begin_mark + key_begin.size();
+			constexpr std::size_t end = signature_view.rfind(key_end);
+
+			static_assert(begin_mark != std::string_view::npos, "GetTypeName parse failed (begin mark)");
 #endif
 
-			constexpr std::string_view contentsName =
-				signature.substr(
-					preSignature.size(),
-					signature.size() - (preSignature.size() + lastSignature.size())
-				);
-			return contentsName;
+			static_assert(begin != std::string_view::npos, "GetTypeName parse failed (begin)");
+			static_assert(end != std::string_view::npos, "GetTypeName parse failed (end)");
+			static_assert(begin <= end, "GetTypeName parse failed (range)");
+
+			return signature_view.substr(begin, end - begin);
 		}
+
+		template<class T>
+		[[nodiscard]] inline constexpr auto GetTypeName(void)noexcept
+		{
+#if defined(__clang__)
+			return ::nox::meta::detail::GetTypeNameImpl<__PRETTY_FUNCTION__>();
+#else
+			return ::nox::meta::detail::GetTypeNameImpl<__FUNCSIG__>();
+#endif
+		}
+
+		template<template<class...> class T>
+		[[nodiscard]] inline constexpr auto GetTypeName(void)noexcept
+		{
+#if defined(__clang__)
+			return ::nox::meta::detail::GetTypeNameImpl<__PRETTY_FUNCTION__>();
+#else
+			return ::nox::meta::detail::GetTypeNameImpl<__FUNCSIG__>();
+#endif
+		}
+
+		template<template<template<class...> class> class T>
+		[[nodiscard]] inline constexpr auto GetTypeName(void)noexcept
+		{
+#if defined(__clang__)
+			return ::nox::meta::detail::GetTypeNameImpl<__PRETTY_FUNCTION__>();
+#else
+			return ::nox::meta::detail::GetTypeNameImpl<__FUNCSIG__>();
+#endif
+		}
+
+		template<template<template<template<class...> class> class> class T>
+		[[nodiscard]] inline constexpr auto GetTypeName(void)noexcept
+		{
+#if defined(__clang__)
+			return ::nox::meta::detail::GetTypeNameImpl<__PRETTY_FUNCTION__>();
+#else
+			return ::nox::meta::detail::GetTypeNameImpl<__FUNCSIG__>();
+#endif
+		}
+
+		template<template<auto...> class T>
+		[[nodiscard]] inline constexpr auto GetTypeName(void)noexcept
+		{
+#if defined(__clang__)
+			return ::nox::meta::detail::GetTypeNameImpl<__PRETTY_FUNCTION__>();
+#else
+			return ::nox::meta::detail::GetTypeNameImpl<__FUNCSIG__>();
+#endif
+		}
+
+		template<template<auto, class, auto, class> class T>
+		[[nodiscard]] inline constexpr auto GetTypeName(void)noexcept
+		{
+#if defined(__clang__)
+			return ::nox::meta::detail::GetTypeNameImpl<__PRETTY_FUNCTION__>();
+#else
+			return ::nox::meta::detail::GetTypeNameImpl<__FUNCSIG__>();
+#endif
+		}
+
+		template<template<auto, class, class...> class T>
+		[[nodiscard]] inline constexpr auto GetTypeName(void)noexcept
+		{
+#if defined(__clang__)
+			return ::nox::meta::detail::GetTypeNameImpl<__PRETTY_FUNCTION__>();
+#else
+			return ::nox::meta::detail::GetTypeNameImpl<__FUNCSIG__>();
+#endif
+		}
+
+		template<template<class, auto, auto...> class T>
+		[[nodiscard]] inline constexpr auto GetTypeName(void)noexcept
+		{
+#if defined(__clang__)
+			return ::nox::meta::detail::GetTypeNameImpl<__PRETTY_FUNCTION__>();
+#else
+			return ::nox::meta::detail::GetTypeNameImpl<__FUNCSIG__>();
+#endif
+		}
+
+		template<template<class, auto, class, class...> class T>
+		[[nodiscard]] inline constexpr auto GetTypeName(void)noexcept
+		{
+#if defined(__clang__)
+			return ::nox::meta::detail::GetTypeNameImpl<__PRETTY_FUNCTION__>();
+#else
+			return ::nox::meta::detail::GetTypeNameImpl<__FUNCSIG__>();
+#endif
+		}
+
+		template<template<auto, class, auto, auto...> class T>
+		[[nodiscard]] inline constexpr auto GetTypeName(void)noexcept
+		{
+#if defined(__clang__)
+			return ::nox::meta::detail::GetTypeNameImpl<__PRETTY_FUNCTION__>();
+#else
+			return ::nox::meta::detail::GetTypeNameImpl<__FUNCSIG__>();
+#endif
+		}
+
+		template<template<class, auto, class, auto, auto...> class T>
+		[[nodiscard]] inline constexpr auto GetTypeName(void)noexcept
+		{
+#if defined(__clang__)
+			return ::nox::meta::detail::GetTypeNameImpl<__PRETTY_FUNCTION__>();
+#else
+			return ::nox::meta::detail::GetTypeNameImpl<__FUNCSIG__>();
+#endif
+		}
+
+		template<template<template<class...> class, class, class...> class T>
+		[[nodiscard]] inline constexpr auto GetTypeName(void)noexcept
+		{
+#if defined(__clang__)
+			return ::nox::meta::detail::GetTypeNameImpl<__PRETTY_FUNCTION__>();
+#else
+			return ::nox::meta::detail::GetTypeNameImpl<__FUNCSIG__>();
+#endif
+		}
+
+		template<template<template<class...> class, auto, auto...> class T>
+		[[nodiscard]] inline constexpr auto GetTypeName(void)noexcept
+		{
+#if defined(__clang__)
+			return ::nox::meta::detail::GetTypeNameImpl<__PRETTY_FUNCTION__>();
+#else
+			return ::nox::meta::detail::GetTypeNameImpl<__FUNCSIG__>();
+#endif
+		}
+
+		template<template<template<template<class...> class> class, class, class...> class T>
+		[[nodiscard]] inline constexpr auto GetTypeName(void)noexcept
+		{
+#if defined(__clang__)
+			return ::nox::meta::detail::GetTypeNameImpl<__PRETTY_FUNCTION__>();
+#else
+			return ::nox::meta::detail::GetTypeNameImpl<__FUNCSIG__>();
+#endif
+		}
+
+		template<template<template<template<class...> class> class, auto, auto...> class T>
+		[[nodiscard]] inline constexpr auto GetTypeName(void)noexcept
+		{
+#if defined(__clang__)
+			return ::nox::meta::detail::GetTypeNameImpl<__PRETTY_FUNCTION__>();
+#else
+			return ::nox::meta::detail::GetTypeNameImpl<__FUNCSIG__>();
+#endif
+		}
+
+		template<template<template<auto...> class> class T>
+		[[nodiscard]] inline constexpr auto GetTypeName(void)noexcept
+		{
+#if defined(__clang__)
+			return ::nox::meta::detail::GetTypeNameImpl<__PRETTY_FUNCTION__>();
+#else
+			return ::nox::meta::detail::GetTypeNameImpl<__FUNCSIG__>();
+#endif
+		}
+
+		template<template<template<auto...> class, class, class...> class T>
+		[[nodiscard]] inline constexpr auto GetTypeName(void)noexcept
+		{
+#if defined(__clang__)
+			return ::nox::meta::detail::GetTypeNameImpl<__PRETTY_FUNCTION__>();
+#else
+			return ::nox::meta::detail::GetTypeNameImpl<__FUNCSIG__>();
+#endif
+		}
+
+		template<template<template<auto...> class, auto, auto...> class T>
+		[[nodiscard]] inline constexpr auto GetTypeName(void)noexcept
+		{
+#if defined(__clang__)
+			return ::nox::meta::detail::GetTypeNameImpl<__PRETTY_FUNCTION__>();
+#else
+			return ::nox::meta::detail::GetTypeNameImpl<__FUNCSIG__>();
+#endif
+		}
+
 
 		template<class T>
 		constexpr bool is_scoped_enum_v = std::is_enum_v<T> && !std::is_convertible_v<T, std::underlying_type_t<T>>;
@@ -159,17 +373,29 @@ namespace nox::meta
 		struct TypeKindHolder<__int128> : ITypeKindHolder < nox::meta::TypeKind::Int128> {};
 
 		template<>
-		struct TypeKindHolder<unsigned __int128> : ITypeKindHolder<nox::meta::TypeKind::UInt128> {};
-
-		
+		struct TypeKindHolder<unsigned __int128> : ITypeKindHolder<nox::meta::TypeKind::UInt128> {};		
 #endif // defined(__SIZEOF_INT128__)
-
 
 		template<>
 		struct TypeKindHolder<std::float_t> : ITypeKindHolder<nox::meta::TypeKind::Float> {};
 
 		template<>
 		struct TypeKindHolder<std::double_t> : ITypeKindHolder<nox::meta::TypeKind::Double> {};
+
+#if defined(__STDCPP_FLOAT16_T__)
+		template<>
+		struct TypeKindHolder<std::float16_t> : ITypeKindHolder<nox::meta::TypeKind::Float16> {};
+#endif // defined(__STDCPP_FLOAT16_T__)
+
+#if defined(__STDCPP_BFLOAT16_T__)
+		template<>
+		struct TypeKindHolder<std::bfloat16_t> : ITypeKindHolder<nox::meta::TypeKind::BFloat16> {};
+#endif // defined(__STDCPP_BFLOAT16_T__)
+
+#if defined(__STDCPP_FLOAT128_T__)
+		template<>
+		struct TypeKindHolder<std::float128_t> : ITypeKindHolder<nox::meta::TypeKind::Float128> {};
+#endif // defined(__STDCPP_FLOAT128_T__)
 
 		template<>
 		struct TypeKindHolder<long double> : ITypeKindHolder<nox::meta::TypeKind::LongDouble> {};
